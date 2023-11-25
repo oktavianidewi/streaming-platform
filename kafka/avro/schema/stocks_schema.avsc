@@ -1,0 +1,10 @@
+{
+    "type" : "record",
+    "namespace" : "StockSampleStream",
+    "name" : "Employee",
+    "fields" : [
+        { "name" : "event_time" , "type" : "timestamp" },
+        { "name" : "ticker" , "type" : "string" },
+        { "name" : "price" , "type" : "double" }
+    ]
+}
