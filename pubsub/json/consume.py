@@ -1,4 +1,5 @@
 from confluent_kafka import Consumer, KafkaException, KafkaError
+from config import TOPIC
 
 # Configure the Consumer
 c = Consumer({
@@ -8,7 +9,7 @@ c = Consumer({
 })
 
 # Subscribe to the topic
-c.subscribe(['test_topic'])
+c.subscribe([TOPIC])
 
 # Process messages
 try:

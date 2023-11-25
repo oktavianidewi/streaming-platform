@@ -1,4 +1,9 @@
 from confluent_kafka import Producer
+from datetime import datetime
+import random
+import json
+import uuid
+from config import TOPIC
 
 def delivery_report(err, msg):
     if err is not None:
@@ -12,12 +17,15 @@ p = Producer({
     'client.id': 'python-producer'
 })
 
-# The topic you want to publish to
-topic = 'test_topic'
-
 # Produce a message
 try:
-    p.produce(topic, key='key', value='value', callback=delivery_report)
+    while True:
+        msg = {
+            'event_time': datetime.now().isoformat(),
+            'ticker': random.choice(['AAPL', 'AMZN', 'MSFT', 'INTC', 'TBV']),
+            'price': round(random.random() * 100, 2)
+        }
+        p.produce(TOPIC, key=str(uuid.uuid4), value=json.dumps(msg), callback=delivery_report)
 except Exception as e:
     print(str(e))
 
