@@ -50,6 +50,7 @@ docker-compose -f kafka/docker-compose.yml up
 
 - access redpanda via browser
 
+![](./img/streaming__redpd_dashboard.png)
 
 ## Improvement on Streaming Data Ingestion Using Avro Schema
 
