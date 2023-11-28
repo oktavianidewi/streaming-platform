@@ -3,7 +3,10 @@ version: '3.7'
 networks:
   redpanda_network:
     driver: bridge
-
+    ipam:
+      config:
+      - subnet: '172.24.1.0/24'
+        gateway: '172.24.1.1'
 
 services:
 
@@ -149,16 +152,16 @@ services:
       - redpanda_network
 
   ksqldb-server:
-    container_name: ksqldb-server
-    image: confluentinc/ksqldb-server:latest
-    ports:
-      - "8088:8088"
-    networks:
-      - redpanda_network
-    environment:
-      KSQL_BOOTSTRAP_SERVERS: "redpanda:9092"
-      KSQL_LISTENERS: "http://0.0.0.0:8088"
-      KSQL_CACHE_MAX_BYTES_BUFFERING: 0
+  #   container_name: ksqldb-server
+  #   image: confluentinc/ksqldb-server:latest
+  #   ports:
+  #     - "8088:8088"
+  #   networks:
+  #     - redpanda_network
+  #   environment:
+  #     KSQL_BOOTSTRAP_SERVERS: "redpanda:9092"
+  #     KSQL_LISTENERS: "http://0.0.0.0:8088"
+  #     KSQL_CACHE_MAX_BYTES_BUFFERING: 0
 
   ksqldb-cli:
     container_name: ksqldb-cli
@@ -169,3 +172,33 @@ services:
     tty: true
     networks:
       - redpanda_network
+  
+  spark-master:
+    image: docker.io/bitnami/spark:3
+    container_name: 'spark-master'
+    networks:
+      redpanda_network:
+        ipv4_address: '172.24.1.2'
+    environment:
+      - SPARK_MODE=master
+      - SPARK_LOCAL_IP=spark-master
+    ports:
+      - '7077:7077'
+      - '8086:8080'
+
+  spark-worker:
+    image: docker.io/bitnami/spark:3
+    container_name: 'spark-worker'
+    networks:
+      redpanda_network:
+        ipv4_address: '172.24.1.3'
+    environment:
+      - SPARK_MODE=worker
+      - SPARK_LOCAL_IP=spark-worker
+      - SPARK_MASTER_URL=spark://spark-master:7077
+      - SPARK_WORKER_WEBUI_PORT=8081
+      - SPARK_WORKER_MEMORY=1G
+      - SPARK_WORKER_CORES=1
+    ports:
+      - '8081:8081'
+  
