@@ -13,6 +13,7 @@ services:
     command:
       - redpanda start
       - --smp 1
+      - --memory 1G
       - --overprovisioned
       - --kafka-addr internal://0.0.0.0:9092,external://0.0.0.0:19092
       # Address the broker advertises to clients that connect to the Kafka API.
