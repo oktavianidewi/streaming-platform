@@ -1,6 +1,6 @@
-
-
 # KSQL
+
+With KSQL, you can access kafka topic using SQL.
 
 ```bash
 docker exec -it  ksqldb-cli bash

@@ -1,3 +1,7 @@
+# Debezium
+
+Debezium can catch any changes in your database and send them to Kafka. Giving you the ability to see what happened in your database in real time.
+
 # Set postgre wal_level to logical
 
 We need to set postgre wal_level to `logical` to make debezium works
@@ -73,3 +77,15 @@ DELETE FROM sample_table WHERE id=3;
 Check out `http://localhost:8085` and see the topics. There will be a topic named `postgres.public.sample_table`
 
 ![](img/topics.png)
+
+You will notice that your topic value conains several keys, including `payload.before` and `payload.after`
+
+- When you insert a new data:
+    - `payload.before`: `null`
+    - `payload.after`: contain your new data
+- When you delete an old data:
+    - `payload.before`: contain your deleted data
+    - `payload.after`: `null`
+- When you update a data
+    - `payload.before`: contain old data
+    - `payload.after`: contain new data
