@@ -83,9 +83,12 @@ You will notice that your topic value conains several keys, including `payload.b
 - When you insert a new data:
     - `payload.before`: `null`
     - `payload.after`: contain your new data
+    - `payload.op`: `c`
 - When you delete an old data:
-    - `payload.before`: contain your deleted data
+    - `payload.before`: contain your deleted data, usually only `id` is filled
     - `payload.after`: `null`
+    - `payload.op`: `d`
 - When you update a data
-    - `payload.before`: contain old data
+    - `payload.before`: `null`
     - `payload.after`: contain new data
+    - `payload.op`: `u`
