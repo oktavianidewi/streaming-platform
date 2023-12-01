@@ -56,7 +56,7 @@ A message has a coordinate of a Topic name a Partition id, and an Offset.
 For further understanding, please refer to [this article](https://www.geeksforgeeks.org/topics-partitions-and-offsets-in-apache-kafka/)
 
 
-## [Hands-On] Implementation of Streaming Data Ingestion without Schema
+## [Hands-On] Implementation of Streaming Data Ingestion with Python
 
 Let's create a stock data stream processing with python and redpanda in a docker-compose. A producer.py will publish a dummy stock data to `stock_json_topic` topic in Redpanda and a consumer.py will consume the data stream from `stock_json_topic` topic.
 

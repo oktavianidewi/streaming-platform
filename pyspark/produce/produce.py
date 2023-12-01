@@ -1,10 +1,6 @@
-#!/usr/bin/env python3
-
 import time
 import json
 import random
-from config import TOPIC
-
 
 from datetime import datetime
 
@@ -18,14 +14,13 @@ def get_json_data():
         'price': round(random.random() * 100, 2)
     }
     return json.dumps(stock) 
-    # return json.dumps(data) 
 
 def main():
     producer = KafkaProducer(bootstrap_servers=['localhost:19092'])
 
     for _ in range(20000):
         json_data = get_json_data()
-        producer.send(TOPIC, bytes(f'{json_data}','UTF-8'))
+        producer.send("stock_json_topic_spark", bytes(f'{json_data}','UTF-8'))
         print(f"Data is sent: {json_data}")
         time.sleep(1)
 

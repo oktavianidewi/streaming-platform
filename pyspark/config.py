@@ -1,1 +1,0 @@
-TOPIC="stock_json_topic_spark"
