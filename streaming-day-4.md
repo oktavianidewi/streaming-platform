@@ -65,7 +65,7 @@ python pyspark/produce/produce.py
 
 ### 4. Create Consumer with PySpark
 
-- Install pySpark locally with this command:
+- Install PySpark locally with this command:
 
 ```
 python -m venv .venv
@@ -73,7 +73,17 @@ source .venv/bin/activate
 pip install pyspark
 ```
 
-- The full code can be seen [here](./pyspark/consume/consume.py)
+
+
+- The consumer full code can be seen [here](./pyspark/consume/consume.py)
+
+- To run the spark, we urge you to use docker, but if it is not possible, please install spark on your laptop by following the guide [here](https://kontext.tech/article/560/apache-spark-301-installation-on-linux-guide) for windows and ubuntu users.
+
+- For mac users, in the main project directory, please download spark and extract the file. 
+```
+wget https://dlcdn.apache.org/spark/spark-3.3.3/spark-3.3.3-bin-hadoop3.tgz
+tar -xzvf spark-3.3.3-bin-hadoop3.tgz
+```
 
 - We should use the `spark-submit` command to run the PySpark code, instead of using Python command.
 
@@ -86,7 +96,8 @@ spark-3.3.3-bin-hadoop3/bin/spark-submit --packages "org.apache.spark:spark-sql-
 
 - Let's dive to each part of the [consume.py code](./pyspark/consume/consume.py)
 
-- TBD
+- We define a SparkSession as an entry point to PySpark. This way, we can utilize the Spark high-level API, RDD and DataFrame.
+
 ```
 spark_session = SparkSession\
     .builder\
@@ -95,7 +106,7 @@ spark_session = SparkSession\
 
 ```
 
-- TBD
+- To read the stock data stream, we use `readStream` method. This method is used to read the stream data incrementally. The older stream data will not be read, instead Spark reads the newly added data since last read operation.
 
 ```
 stream = spark_session\
@@ -107,30 +118,40 @@ stream = spark_session\
     .load()
 ```
 
-- TBD
+- Define the log level of Spark, only the `WARN` log level will be shown in console.
+
 ```
 spark_session.sparkContext.setLogLevel('WARN')
 ```
 
-- TBD
+- Print the schema of the stream.
+
 ```
 stream.printSchema()
 
 ```
 ![](./img/schema_stream.png)
 
+- Remember that kafka store the data in a byte format, so we need to parse value from binay to string. `selectExpr()` transforms, executes an SQL expression and returns a new updated DataFrame.
 
-- TBD
+```
+json_df = stream.selectExpr("cast(value as string) as value")
+```
+
+- Prepare a schema for the data stream, we need to deserialize it with a valid schema.
+
 ```
 json_schema = StructType([
     StructField('event_time', StringType(), True), \
     StructField('ticker', StringType(), True), \
     StructField('price', DoubleType(), True) \
 ])
+```
 
-# Parse value from binay to string
-json_df = stream.selectExpr("cast(value as string) as value")
 
+- Convert the string `value` (on column `value`) to a struct based on predefined schema.
+
+```
 # Apply Schema to JSON value column and expand the value
 json_expanded_df = json_df.withColumn("value", from_json(json_df["value"], json_schema)).select("value.*") 
 
@@ -139,7 +160,9 @@ json_expanded_df.printSchema()
 
 ![](./img/schema_value.png)
 
-- TBD
+- We use `writeStream.format("console")`` to write the streaming DataFrame to console. 
+
+
 ```
 query = json_expanded_df \
     .writeStream \
@@ -150,15 +173,13 @@ query.awaitTermination()
 
 ```
 
-- Side by side, the streaming publisher and the consumer result can be seen below
+- The definition of awaitTermination can be read [here](https://spark.apache.org/docs/3.1.1/api/python/reference/api/pyspark.sql.streaming.StreamingQuery.awaitTermination.html)
 
-![](./img/spark.gif)
+- Side by side, the streaming publisher and the consumer result can be seen in this video
 
-## References
-
-compatibility spark in cloud: 
-- AWS: Glue
-- GCP: Dataproc
+- Apache Spark compatibility in cloud: 
+    - AWS: Glue
+    - GCP: Dataproc
 
 # Resources:
 - https://medium.com/geekculture/pandas-vs-pyspark-fe110c266e5c
