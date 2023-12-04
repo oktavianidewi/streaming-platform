@@ -175,7 +175,7 @@ query.awaitTermination()
 
 - The definition of awaitTermination can be read [here](https://spark.apache.org/docs/3.1.1/api/python/reference/api/pyspark.sql.streaming.StreamingQuery.awaitTermination.html)
 
-- Side by side, the streaming publisher and the consumer result can be seen in this video
+- Side by side, the streaming publisher and the consumer result can be seen in this [video](/img/streaming-result.mp4)
 
 - Apache Spark compatibility in cloud: 
     - AWS: Glue
